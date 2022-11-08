@@ -1,6 +1,6 @@
 import { utils } from 'ethers'
 
-import { ERC20 } from '../../typechain/ERC20'
+import { MRX } from '../../typechain'
 import {TokenLockForPublicTest} from "../../typechain";
 // @ts-ignore
 import { ethers } from "hardhat";
@@ -10,7 +10,7 @@ import {MockProvider} from "ethereum-waffle";
 
 interface FactoryFixture {
   provider: Web3Provider | MockProvider
-  mirrorX: ERC20
+  mirrorX: MRX
   tokenLockForPublic: TokenLockForPublicTest
   openDate: Date
 }
@@ -24,7 +24,7 @@ export async function factoryFixture(wallets, provider): Promise<FactoryFixture>
   let balance = await wallet.getBalance()
   console.log('balance', utils.formatEther(balance))
   const ERC20 = await ethers.getContractFactory('ERC20', wallet)
-  const mirrorX = (await ERC20.deploy(wallet.address, overrides)) as ERC20
+  const mirrorX = (await ERC20.deploy(wallet.address, overrides)) as MRX
 
   await printBlockTimestamp(provider)
 

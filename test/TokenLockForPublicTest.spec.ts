@@ -13,7 +13,7 @@ import {
     timestamp2String
 } from './shared/utilities'
 import {factoryFixture} from './shared/fixtures'
-import {ERC20} from "../typechain";
+import {MRX} from "../typechain";
 import {TokenLockForPublicTest} from "../typechain";
 
 describe('TokenLockForPublic', () => {
@@ -21,7 +21,7 @@ describe('TokenLockForPublic', () => {
     let wallet: Wallet, other: Wallet
     let loadFixture: ReturnType<typeof createFixtureLoader>
 
-    let mirrorX: ERC20
+    let mirrorX: MRX
     let decimals
     let tokenLockForPublic: TokenLockForPublicTest
     let openDate: Date
