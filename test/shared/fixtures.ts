@@ -23,8 +23,8 @@ export async function factoryFixture(wallets, provider): Promise<FactoryFixture>
   let wallet = wallets[0]
   let balance = await wallet.getBalance()
   console.log('balance', utils.formatEther(balance))
-  const ERC20 = await ethers.getContractFactory('ERC20', wallet)
-  const mirrorX = (await ERC20.deploy(wallet.address, overrides)) as MRX
+  const MRX = await ethers.getContractFactory('MRX', wallet)
+  const mirrorX = (await MRX.deploy(wallet.address, overrides)) as MRX
 
   await printBlockTimestamp(provider)
 
