@@ -25,11 +25,11 @@ contract TokenLockForCommunityTest is Ownable {
 
     // 首次解锁期限
     // uint256 private immutable firstTerm = 15 * 24 * 3600;
-    uint256 public immutable firstTerm = 15;
+    uint256 public immutable firstTerm = 15 * 60;
 
     // 释放间隔 30天
     // uint256 private immutable releaseInterval = 30 * 24 * 3600;
-    uint256 public immutable releaseInterval = 30;
+    uint256 public immutable releaseInterval = 30 * 60;
 
     // 可释放千分比 10,10,10,55,55,55,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,35
     uint256[] public releasePercents = [15, 25, 35, 90, 145, 200, 245, 290, 335, 380, 425, 470, 515, 560, 605, 650, 695, 740, 785, 800, 875, 920, 965, 1000];
