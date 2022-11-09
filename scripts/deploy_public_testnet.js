@@ -67,11 +67,23 @@ const deploy = async () => {
 
     if (configContent[chainId].step < 5) {
         const tokenLockForPublic = await ethers.getContractAt('TokenLockForPublicTest', configContent[chainId].tokenLockForPublic, wallet)
+        let addressList = []
+        let amountList = []
+        for (let i=1; i<=100; i++) {
+            addressList.push(ethers.Wallet.createRandom().address)
+            amountList.push(ethers.utils.parseUnits((i * 100).toString(), 18))
+        }
+
         let tx = await tokenLockForPublic.lock(wallet.address, ethers.utils.parseUnits('10000', 18))
         await tx.wait()
+        console.log('lock 10000 mrx for user:', wallet.address)
+
+        tx = await tokenLockForPublic.lockBatch(addressList, amountList)
+        await tx.wait()
+        console.log('lock mrx for 100 users')
+
         configContent[chainId].step = configContent[chainId].step + 1
         saveConfig(configContent, configPath)
-        console.log('lock 10000 mrx for user:', wallet.address)
     }
 
     const tokenLockForPublic = await ethers.getContractAt('TokenLockForPublicTest', configContent[chainId].tokenLockForPublic, wallet)

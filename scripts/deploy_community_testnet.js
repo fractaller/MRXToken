@@ -75,7 +75,7 @@ const deploy = async () => {
 
         tx = await tokenLockForCommunity.lockBatch(addressList, amountList)
         await tx.wait()
-        console.log('lock mrx for 100 users:', wallet.address)
+        console.log('lock mrx for 100 users')
 
         configContent[chainId].step = configContent[chainId].step + 1
         saveConfig(configContent, configPath)
