@@ -5,7 +5,7 @@ pragma solidity ^0.8.0;
 import "./SafeERC20.sol";
 import "./Ownable.sol";
 
-contract TokenLockForPublic is Ownable {
+contract TokenLockForCommunityTest is Ownable {
     using SafeERC20 for IERC20;
 
     // ERC20 basic token contract being held
@@ -17,20 +17,22 @@ contract TokenLockForPublic is Ownable {
     // 首次释放时间
     uint256 public startDate;
 
-    // 首次释放百分比 20%
-    uint256 public immutable startPercent = 20;
+    // 首次释放百分比 15%
+    uint256 public immutable startPercent = 5;
 
     // 线性释放时间
     uint256 public releaseDate;
 
     // 首次解锁期限
-    uint256 public immutable firstTerm = 15 * 24 * 3600;
+    // uint256 private immutable firstTerm = 15 * 24 * 3600;
+    uint256 public immutable firstTerm = 15 * 60;
 
     // 释放间隔 30天
-    uint256 public immutable releaseInterval = 30 * 24 * 3600;
+    // uint256 private immutable releaseInterval = 30 * 24 * 3600;
+    uint256 public immutable releaseInterval = 30 * 60;
 
-    // 可释放千分比 60,60,60,100,100,100,42,42,42,42,42,42,42,42,42,36
-    uint256[] public releasePercents = [80, 140, 200, 300, 400, 500, 542, 584, 626, 668, 710, 752, 794, 836, 878, 920, 964, 1000];
+    // 可释放千分比 10,10,10,55,55,55,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,35
+    uint256[] public releasePercents = [15, 25, 35, 90, 145, 200, 245, 290, 335, 380, 425, 470, 515, 560, 605, 650, 695, 740, 785, 800, 875, 920, 965, 1000];
 
     // 用户列表
     address[] public allUsers;
@@ -89,10 +91,6 @@ contract TokenLockForPublic is Ownable {
         require(token.balanceOf(address(this)) >= availableForClaim, "Insufficient balance for claim");
         token.transfer(user, availableForClaim);
         releasedAmount[user] += availableForClaim;
-    }
-
-    function timestamp() external view returns (uint256) {
-        return block.timestamp;
     }
 
     function available(address user) external view returns (uint256) {

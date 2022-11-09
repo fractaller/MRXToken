@@ -5,7 +5,7 @@ pragma solidity ^0.8.0;
 import "./SafeERC20.sol";
 import "./Ownable.sol";
 
-contract TokenLockForPublic is Ownable {
+contract TokenLockForPublicTest is Ownable {
     using SafeERC20 for IERC20;
 
     // ERC20 basic token contract being held
@@ -24,10 +24,12 @@ contract TokenLockForPublic is Ownable {
     uint256 public releaseDate;
 
     // 首次解锁期限
-    uint256 public immutable firstTerm = 15 * 24 * 3600;
+    //uint256 private immutable firstTerm = 15 * 24 * 3600;
+    uint256 public immutable firstTerm = 15 * 2;
 
     // 释放间隔 30天
-    uint256 public immutable releaseInterval = 30 * 24 * 3600;
+    //uint256 private immutable releaseInterval = 30 * 24 * 3600;
+    uint256 public immutable releaseInterval = 30 * 2;
 
     // 可释放千分比 60,60,60,100,100,100,42,42,42,42,42,42,42,42,42,36
     uint256[] public releasePercents = [80, 140, 200, 300, 400, 500, 542, 584, 626, 668, 710, 752, 794, 836, 878, 920, 964, 1000];

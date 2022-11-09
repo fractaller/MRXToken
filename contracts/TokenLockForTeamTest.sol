@@ -5,7 +5,7 @@ pragma solidity ^0.8.0;
 import "./SafeERC20.sol";
 import "./Ownable.sol";
 
-contract TokenLockForPublic is Ownable {
+contract TokenLockForTeamTest is Ownable {
     using SafeERC20 for IERC20;
 
     // ERC20 basic token contract being held
@@ -14,26 +14,22 @@ contract TokenLockForPublic is Ownable {
     // 锁仓支付地址
     address public payer;
 
-    // 首次释放时间
+    // 开始时间
     uint256 public startDate;
-
-    // 首次释放百分比 20%
-    uint256 public immutable startPercent = 20;
 
     // 线性释放时间
     uint256 public releaseDate;
 
     // 首次解锁期限
-    uint256 public immutable firstTerm = 15 * 24 * 3600;
+    // uint256 private immutable firstTerm = 30 * 24 * 3600;
+    uint256 public immutable firstTerm = 30;
 
-    // 释放间隔 30天
-    uint256 public immutable releaseInterval = 30 * 24 * 3600;
+    // 释放间隔 90天
+    // uint256 private immutable releaseInterval = 90 * 24 * 3600;
+    uint256 public immutable releaseInterval = 90;
 
-    // 可释放千分比 60,60,60,100,100,100,42,42,42,42,42,42,42,42,42,36
-    uint256[] public releasePercents = [80, 140, 200, 300, 400, 500, 542, 584, 626, 668, 710, 752, 794, 836, 878, 920, 964, 1000];
-
-    // 用户列表
-    address[] public allUsers;
+    // 可释放百分比 [2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+    uint256[] public releasePercents = [2, 5, 10, 16, 23, 31, 40, 50, 61, 73, 86, 100];
 
     // 锁仓数量
     mapping (address => uint256) public lockedAmounts;
@@ -52,13 +48,16 @@ contract TokenLockForPublic is Ownable {
         releaseDate = startDate + releaseInterval;
     }
 
+    function destroy(address payable receiver) external onlyOwner {
+        require(0 == startDate || block.timestamp <= startDate, "Lock time exceed");
+        token.transfer(receiver, token.balanceOf(address(this)));
+        selfdestruct(receiver);
+    }
+
     function lock(address user, uint amount) external onlyOwner {
         require(0 == startDate || block.timestamp <= startDate, "Lock time exceed");
-        if (lockedAmounts[user] == 0) {
-            allUsers.push(user);
-        }
-
         lockedAmounts[user] += amount;
+
         require(token.balanceOf(payer) >= amount, "Insufficient balance for lock");
         token.transferFrom(payer, address(this), amount);
     }
@@ -69,9 +68,6 @@ contract TokenLockForPublic is Ownable {
         uint amountTotal = 0;
         for (uint i=0; i<addresses.length; i++) {
             amountTotal += amounts[i];
-            if (lockedAmounts[addresses[i]] == 0) {
-                allUsers.push(addresses[i]);
-            }
             lockedAmounts[addresses[i]] += amounts[i];
         }
 
@@ -91,28 +87,27 @@ contract TokenLockForPublic is Ownable {
         releasedAmount[user] += availableForClaim;
     }
 
-    function timestamp() external view returns (uint256) {
-        return block.timestamp;
+    function reassign(address user, address to) external onlyOwner {
+        lockedAmounts[to] += lockedAmounts[user];
+        lockedAmounts[user] = 0;
+        releasedAmount[to] += releasedAmount[user];
+        releasedAmount[user] = 0;
     }
 
     function available(address user) external view returns (uint256) {
         // 没到释放时间
-        if (block.timestamp < startDate) {
+        if (block.timestamp < releaseDate) {
             return 0;
         }
 
         // 初次释放数量
         uint lockedAmount = lockedAmounts[user];
-        uint firstAmount = lockedAmount * startPercent / 1000;
-        if (block.timestamp < releaseDate) {
-            return firstAmount - releasedAmount[user];
-        }
 
-        // 线性释放数量
+        // 释放次数
         uint releasedTimes = ((block.timestamp - releaseDate) / releaseInterval) + 1;
         releasedTimes = releasedTimes >= releasePercents.length ? releasePercents.length : releasedTimes;
         uint releasePercent = releasePercents[releasedTimes - 1];
 
-        return ((lockedAmount * releasePercent) / 1000) - releasedAmount[user];
+        return ((lockedAmount * releasePercent) / 100) - releasedAmount[user];
     }
 }

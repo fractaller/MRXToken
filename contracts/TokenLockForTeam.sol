@@ -2,8 +2,8 @@
 
 pragma solidity ^0.8.0;
 
-import "./libraries/SafeERC20.sol";
-import "./libraries/Ownable.sol";
+import "./SafeERC20.sol";
+import "./Ownable.sol";
 
 contract TokenLockForTeam is Ownable {
     using SafeERC20 for IERC20;
